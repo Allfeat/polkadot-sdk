@@ -66,11 +66,10 @@ fn test_harness<T: Future<Output = ()>>(
 	executor::block_on(future::join(test_fut, subsystem)).1.unwrap();
 }
 
-pub fn node_features_with_shuffling() -> NodeFeatures {
+pub fn node_features_with_mapping_enabled() -> NodeFeatures {
 	let mut node_features = NodeFeatures::new();
-	node_features
-		.resize(node_features::FeatureIndex::AvailabilityChunkShuffling as usize + 1, false);
-	node_features.set(node_features::FeatureIndex::AvailabilityChunkShuffling as u8 as usize, true);
+	node_features.resize(node_features::FeatureIndex::AvailabilityChunkMapping as usize + 1, false);
+	node_features.set(node_features::FeatureIndex::AvailabilityChunkMapping as u8 as usize, true);
 	node_features
 }
 
@@ -79,7 +78,7 @@ pub fn node_features_with_shuffling() -> NodeFeatures {
 /// Exceptional cases are tested as unit tests in `fetch_task`.
 #[rstest]
 #[case(NodeFeatures::EMPTY)]
-#[case(node_features_with_shuffling())]
+#[case(node_features_with_mapping_enabled())]
 fn check_basic(#[case] node_features: NodeFeatures) {
 	let state = TestState::new(node_features);
 	test_harness(state.keystore.clone(), move |harness| state.run(harness));
@@ -88,7 +87,7 @@ fn check_basic(#[case] node_features: NodeFeatures) {
 /// Check whether requester tries all validators in group.
 #[rstest]
 #[case(NodeFeatures::EMPTY)]
-#[case(node_features_with_shuffling())]
+#[case(node_features_with_mapping_enabled())]
 fn check_fetch_tries_all(#[case] node_features: NodeFeatures) {
 	let mut state = TestState::new(node_features);
 	for (_, v) in state.chunks.iter_mut() {
@@ -106,7 +105,7 @@ fn check_fetch_tries_all(#[case] node_features: NodeFeatures) {
 /// availability.
 #[rstest]
 #[case(NodeFeatures::EMPTY)]
-#[case(node_features_with_shuffling())]
+#[case(node_features_with_mapping_enabled())]
 fn check_fetch_retry(#[case] node_features: NodeFeatures) {
 	let mut state = TestState::new(node_features);
 	state

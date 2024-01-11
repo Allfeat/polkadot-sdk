@@ -41,7 +41,7 @@ use polkadot_node_subsystem_test_helpers::{
 
 use crate::tests::{
 	mock::{get_valid_chunk_data, make_session_info, OccupiedCoreBuilder},
-	node_features_with_shuffling,
+	node_features_with_mapping_enabled,
 };
 
 use super::Requester;
@@ -124,7 +124,7 @@ fn spawn_virtual_overseer(
 									.expect("Receiver should be alive.");
 							},
 							RuntimeApiRequest::NodeFeatures(_, tx) => {
-								tx.send(Ok(node_features_with_shuffling()))
+								tx.send(Ok(node_features_with_mapping_enabled()))
 									.expect("Receiver should be alive.");
 							},
 							RuntimeApiRequest::AvailabilityCores(tx) => {
@@ -174,15 +174,6 @@ fn spawn_virtual_overseer(
 							.unwrap_or_default();
 						response_channel
 							.send(Ok(ancestors))
-							.expect("Receiver is expected to be alive");
-					},
-					AllMessages::ChainApi(ChainApiMessage::BlockNumber(hash, response_channel)) => {
-						response_channel
-							.send(Ok(test_state
-								.relay_chain
-								.iter()
-								.position(|h| *h == hash)
-								.map(|pos| pos as u32)))
 							.expect("Receiver is expected to be alive");
 					},
 					msg => panic!("Unexpected overseer message: {:?}", msg),
