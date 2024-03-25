@@ -214,6 +214,30 @@ pub struct PendingSwap<CollectionId, ItemId, ItemPriceWithDirection, Deadline> {
 	pub(super) deadline: Deadline,
 }
 
+/// Information about the pending swap.
+impl<CollectionId, ItemId, ItemPriceWithDirection, Deadline> PendingSwap<CollectionId, ItemId, ItemPriceWithDirection, Deadline> {
+	/// return the desired collection
+    pub fn desired_collection(&self) -> &CollectionId {
+        &self.desired_collection
+    }
+
+	/// return the desired item
+    pub fn desired_item(&self) -> &Option<ItemId> {
+        &self.desired_item
+    }
+
+	/// return the price
+	pub fn price(&self) -> &Option<ItemPriceWithDirection> {
+        &self.price
+    }
+
+	/// return the deadline
+    pub fn deadline(&self) -> &Deadline {
+        &self.deadline
+    }
+}
+
+
 /// Information about the reserved attribute deposit.
 #[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
 pub struct AttributeDeposit<DepositBalance, AccountId> {
